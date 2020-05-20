@@ -1,6 +1,12 @@
+import csv
 # Create a class to hold a city location. Call the class "City". It should have
 # fields for name, lat and lon (representing latitude and longitude).
 
+class City:
+  def __init__(self, name, lat, lon):
+    self.name = name
+    self.lat = lat
+    self.lon = lon
 
 # We have a collection of US cities with population over 750,000 stored in the
 # file "cities.csv". (CSV stands for "comma-separated values".)
@@ -20,6 +26,21 @@ def cityreader(cities=[]):
   # TODO Implement the functionality to read from the 'cities.csv' file
   # For each city record, create a new City instance and add it to the 
   # `cities` list
+  with open('cities.csv') as cities_data:
+    csv_reader = csv.reader(cities_data)
+    next(csv_reader) # skips the first row
+
+    # loop over the data
+    for row in csv_reader:
+      # grab the values i need from each row
+      city_name = row[0]
+      lat = float(row[3])
+      lon = float(row[4])
+
+      # create a new instance of the class passing it the data it needs from the csv file
+      new_city = City(city_name, lat,lon)
+      # add the new city to the list
+      cities.append(new_city)
     
     return cities
 
@@ -27,7 +48,7 @@ cityreader(cities)
 
 # Print the list of cities (name, lat, lon), 1 record per line.
 for c in cities:
-    print(c)
+    print(c.name, c.lat, c.lon)
 
 # STRETCH GOAL!
 #
@@ -59,13 +80,31 @@ for c in cities:
 # Salt Lake City: (40.7774,-111.9301)
 
 # TODO Get latitude and longitude values from the user
+import sys
+# input1 = input("Enter lat1,lon1: ").split(",")
+# input2 = input("Enter lat2,lon2: ").split(",")
+
+# lat1 = input1[0]
+# lon1 = input1[1]
+# lat2 = input2[0]
+# lon2 = input2[1]
 
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
-  # within will hold the cities that fall within the specified region
-  within = []
 
   # TODO Ensure that the lat and lon valuse are all floats
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
+  lat1 = float(lat1)
+  lon1 = float(lon1)
+  lat2 = float(lat2)
+  lon2 = float(lon2)
+  max_lat = abs(lat1) if abs(lat1) > abs(lat2) else abs(lat2)
+  max_lon = abs(lon1) if abs(lon1) > abs(lon2) else abs(lon2)
+
+  min_lat = abs(lat1) if abs(lat1) < abs(lat2) else abs(lat2)
+  min_lon = abs(lon1) if abs(lon1) < abs(lon2) else abs(lon2)
+  
+  # within will hold the cities that fall within the specified region
+  within = [city for city in cities if abs(city.lat) >= min_lat and abs(city.lat) <= max_lat and abs(city.lon) >= min_lon and abs(city.lon) <= max_lon]
 
   return within
